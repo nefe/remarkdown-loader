@@ -2,5 +2,12 @@ import React from 'react';
 ${preCode}
 
 export default function ReMarkdown(props) {
-  return <div>${markdown}</div>;
+  const __html = `${markdown}`;
+
+  return (
+    <div className="remarkdown-container"
+      dangerouslySetInnerHTML={{ __html }}
+    >
+    </div>
+  );
 }

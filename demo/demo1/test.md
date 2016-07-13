@@ -6,6 +6,14 @@
 import { Demo1, Demo2 } from './Demos';
 ```
 
+```js
+
+const data = [{
+  a: 'b',
+}];
+
+```
+
 ${Demo1}
 
 ${Demo2}

@@ -114,7 +114,6 @@ module.exports = function(markdown) {
   const restTokens = getRestTokens(tokens);
 
   const markdownRes = restTokens.map(token => {
-    console.log(token);
     if (Array.isArray(token)) {
       token.links = tokens.links;
 
