@@ -113,15 +113,15 @@ module.exports = function(markdown) {
   const preCode = getPrecode(tokens);
   const restTokens = getRestTokens(tokens);
 
-  const markdownRes = restTokens.map(token => {
+  const markdowns = restTokens.map(token => {
     if (Array.isArray(token)) {
       token.links = tokens.links;
 
-      return marked.parser(token);
+      return `<div dangerouslySetInnerHTML={{ __html: \`${marked.parser(token)}\` }}></div>`;
     }
 
     return token;
   });
 
-  return getJSCode(markdownRes.join('\n'), preCode);
+  return getJSCode(markdowns.join('\n'), preCode);
 };
