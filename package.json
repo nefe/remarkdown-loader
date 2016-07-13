@@ -4,8 +4,7 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "build": "rm -rf lib && babel src --out-dir lib -w",
-    "test": "mocha --check-leaks --compilers js:babel-core/register",
+    "build": "rm -rf lib && babel src --out-dir lib",
     "demo": "UV_THREADPOOL_SIZE=100 webpack-dev-server  --progress --port 4004  --colors --content-base demo --hot --inline --config demo/webpack.config.js"
   },
   "keywords": [
@@ -39,12 +38,9 @@
     "*.md"
   ],
   "dependencies": {
-    "babel-core": "^6.9.0",
-    "css-loader": "^0.23.1",
     "highlight.js": "^9.4.0",
     "loader-utils": "^0.2.15",
     "marked": "^0.3.5",
-    "style-loader": "^0.13.1",
     "webpack": "^1.13.1"
   }
 }

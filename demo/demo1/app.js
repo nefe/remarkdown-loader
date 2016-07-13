@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import Doc from './test.md';
-import 'highlight.js/styles/monokai.css';
+import Test from './test.md';
 
-class Demo1 extends Component {
+class Demo extends Component {
   render() {
     return (
       <div>
-        <div className="header">demo1</div>
-        <Doc ctx={{ React, ReactDOM }} className="demo-doc" />
+        <div className="header">example</div>
+        <Test className="test" />
       </div>
     );
   }
 }
 
-ReactDOM.render(<Demo1 />, document.getElementById('app'));
+ReactDOM.render(<Demo />, document.getElementById('app'));

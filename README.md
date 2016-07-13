@@ -17,7 +17,7 @@ $ npm i -D remarkdown-loader
 ```js
 'module': {
   'loaders': [{
-    'loader': 'remarkdown-loader',
+    'loaders': ['babel', 'remarkdown-loader'],
     'test': /\.md$/,
   }]
 }

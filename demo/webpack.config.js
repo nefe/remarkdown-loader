@@ -19,25 +19,18 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        loader: 'babel-loader',
+        loader: 'babel',
         include: [
           __dirname,
         ],
       },
       {
         test: /\.md$/,
-        loader: path.resolve(__dirname, '../'),
+        loaders: ['babel', path.resolve(__dirname, '../')],
         include: [
           __dirname,
         ]
       },
-      {
-        test: /\.css$/,
-        loader: 'style!css',
-        include: [
-          path.join(__dirname, '../node_modules/highlight.js'),
-        ]
-      }
     ],
   },
 };

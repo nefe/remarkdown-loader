@@ -2,15 +2,12 @@
 
 ## It's a code
 
-```js-react
-
-const Test = props => {
-  return <div>hello world</div>;
-}
-console.log(id);
-ReactDOM.render(<Test />, document.getElementById(id));
+```js-precode
+import { Demo1, Demo2 } from './Demos';
 ```
 
-## It's footer
+${Demo1}
 
-> @author jasonHzq
+${Demo2}
+
+## It's footer

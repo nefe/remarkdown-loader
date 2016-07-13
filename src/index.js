@@ -1,21 +1,14 @@
 import loaderUtils from 'loader-utils';
-import { transform } from 'babel-core';
 import marked from 'marked';
 import H from 'highlight.js';
+import fs from 'fs';
+import path from 'path';
 
 const highlight = (code, lang) => {
   if (lang) {
     return H.highlightAuto(code, [lang]).value;
   }
   return H.highlightAuto(code).value;
-};
-
-const opts = {
-  presets: [
-    require('babel-preset-react'),
-    require('babel-preset-es2015'),
-    require('babel-preset-stage-0'),
-  ],
 };
 
 // default option
@@ -29,110 +22,76 @@ let options = {
   smartypants: false
 };
 
-let id = 0;
+const getJSCode = (markdown, preCode) => {
+  const template = fs.readFileSync(path.join(__dirname, '..', 'ReMarkdown.template'));
+  const templateStr = template.toString();
 
-const getResult = docs => {
-  return `
-import React, { Component, PropTypes } from 'react';
-
-class Markdown extends Component {
-  static propTypes = {
-    ctx: PropTypes.object,
-  };
-
-  componentWillMount() {
-    this.id = 0;
-    this.fns = [];
-  }
-
-  componentDidMount() {
-    this.fns.map(item => {
-      const [fn, errorId] = item;
-      
-      try {
-        fn();
-      } catch (e) {
-        this.props.ctx.ReactDOM.render(<span className="error-info">{e.toString()}</span>, document.getElementById(errorId));
-      }
-    })
-  }
-
-  renderCode(doc, text) {
-    const { ctx } = this.props;
-    const ctxKeys = Object.keys(ctx);
-    const ctxVals = ctxKeys.map(key => ctx[key]);
-    let errorMsg = '';
-
-    try {
-      this.fns.push([
-        new Function(...ctxKeys, 'id', text)
-          .bind(this, ...ctxVals, 'preview${id}-' + this.id),
-        'preview-error${id}-' + this.id,
-      ]);
-    } catch (e) {
-      errorMsg = e.toString();
-    }
-
-    return \`
-      <div>
-        <div class="hljs">\${doc}</div>
-        <div id="\${'preview-error${id}-' + this.id}">
-          \${ errorMsg && errorMsg }
-        </div>
-        preview: <div id="\${'preview${id++}-' + this.id++}"></div>
-      </div>
-    \`;
-  }
-
-  render() {
-    const __html = ${docs.map(doc => {
-      if (Array.isArray(doc)) {
-        return 'this.renderCode(`' + doc[0] + '`, `' + transform(doc[1], opts).code + '`)';
-      }
-
-      return '`' + doc + '`';
-    }).join(' + ')};
-
-    return (
-      <div className="remarkdown-container"
-        dangerouslySetInnerHTML={{ __html }}
-      >
-      </div>
-    );
-  }
+  return templateStr.replace(/\${(preCode)}/g, preCode)
+    .replace(/\${(markdown)}/g, markdown);
 }
 
-export default Markdown;
-  `;
+const getPrecode = (tokens) => {
+  return tokens.filter(token => {
+    const { type, lang } = token;
+
+    return type === 'code' && lang === 'js-precode';
+  }).map(token => {
+    const { text } = token;
+
+    return text;
+  }).join('\n');
 }
 
-const getDocs = (tokens) => {
-  const docs = [];
-  let doc = [];
-  doc.links = tokens.links;
+const reactRegexp = /\${(\w+)}/;
 
-  for (let i = 0; i < tokens.length; i++) {
-    const token = tokens[i];
+function pushLastItem(arr, tk) {
+  const length = arr.length;
 
-    if (token.type === 'code' && token.lang === 'js-react') {
-      token.lang = 'js';
-      docs.push(doc);
-      doc = [token];
-      doc.links = tokens.links;
+  if (!length) {
+    return [[tk]];
+  }
 
-      docs.push([doc, token.text]);
-      doc = [];
-      doc.links = tokens.links;
-    } else {
-      doc.push(token);
+  const lastItem = arr[length -1];
+
+  if (typeof lastItem === 'string') {
+    return [...arr, [tk]];
+  }
+
+  return [...arr.slice(0, length -1), [...lastItem, tk]];
+}
+
+const getRestTokens = (tokens) => {
+  const links = tokens.links;
+
+  const restTokens = tokens.filter(token => {
+    const { type, lang } = token;
+
+    if (!type) {
+      return false;
     }
-  }
 
-  if (doc.length) {
-    docs.push(doc);
-  }
+    if (type === 'code' && lang === 'js-precode') {
+      return false;
+    }
 
-  return docs;
+    return true;
+  }).map(token => {
+    const { type, text } = token;
+
+    if (reactRegexp.test(text)) {
+      return text.replace(reactRegexp, '<$1 />');
+    }
+
+    return token;
+  });
+
+  return restTokens.reduce((result, token) => {
+    if (typeof token !== 'string') {
+      return pushLastItem(result, token);
+    }
+
+    return [...result, token];
+  }, []);
 }
 
 module.exports = function(markdown) {
@@ -146,21 +105,24 @@ module.exports = function(markdown) {
     highlight,
   };
 
-  this.cacheable();
+  this.cacheable && this.cacheable();
 
   marked.setOptions(options);
 
   const tokens = marked.lexer(markdown, options);
+  const preCode = getPrecode(tokens);
+  const restTokens = getRestTokens(tokens);
 
-  const docs = getDocs(tokens).map(doc => {
-    if (Array.isArray(doc[0])) {
-      const [ tokens, text ] = doc;
+  const markdownRes = restTokens.map(token => {
+    console.log(token);
+    if (Array.isArray(token)) {
+      token.links = tokens.links;
 
-      return [marked.parser(tokens), text];
+      return marked.parser(token);
     }
 
-    return marked.parser(doc);
+    return token;
   });
 
-  return transform(getResult(docs), opts).code;
+  return getJSCode(markdownRes.join('\n'), preCode);
 };
