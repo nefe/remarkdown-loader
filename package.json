@@ -35,7 +35,8 @@
   },
   "files": [
     "lib",
-    "*.md"
+    "*.md",
+    "*.template"
   ],
   "dependencies": {
     "highlight.js": "^9.4.0",
