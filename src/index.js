@@ -117,7 +117,7 @@ module.exports = function(markdown) {
     if (Array.isArray(token)) {
       token.links = tokens.links;
 
-      return `<div dangerouslySetInnerHTML={{ __html: \`${marked.parser(token)}\` }}></div>`;
+      return `<div className="remarkdown-container" dangerouslySetInnerHTML={{ __html: \`${marked.parser(token)}\` }}></div>`;
     }
 
     return token;

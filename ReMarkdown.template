@@ -3,7 +3,7 @@ ${preCode}
 
 export default function ReMarkdown(props) {
   return (
-    <div className="remarkdown-container"
+    <div
     >
       ${markdown}
     </div>
