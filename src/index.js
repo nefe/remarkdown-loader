@@ -134,9 +134,7 @@ module.exports = function(markdown) {
     currTemplateStr = `import Demo from '${Demo}';\n${currTemplateStr}`;
   }
 
-  const result = currTemplateStr
+  return currTemplateStr
     .replace(/\${(preCode)}/g, preCode)
     .replace(/\${(markdown)}/g, parsedMarkdown);
-  console.log(result);
-  return result;
 };
