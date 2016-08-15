@@ -4,6 +4,9 @@ import H from 'highlight.js';
 import fs from 'fs';
 import path from 'path';
 
+const template = fs.readFileSync(path.join(__dirname, '..', 'ReMarkdown.template'));
+const templateStr = template.toString();
+
 const highlight = (code, lang) => {
   if (lang) {
     return H.highlightAuto(code, [lang]).value;
@@ -22,14 +25,6 @@ let options = {
   smartypants: false
 };
 
-const getJSCode = (markdown, preCode) => {
-  const template = fs.readFileSync(path.join(__dirname, '..', 'ReMarkdown.template'));
-  const templateStr = template.toString();
-
-  return templateStr.replace(/\${(preCode)}/g, preCode)
-    .replace(/\${(markdown)}/g, markdown);
-}
-
 const getPrecode = (tokens) => {
   return tokens.filter(token => {
     const { type, lang } = token;
@@ -41,8 +36,6 @@ const getPrecode = (tokens) => {
     return text;
   }).join('\n');
 }
-
-const reactRegexp = /\${(\w+)}/;
 
 function pushLastItem(arr, tk) {
   const length = arr.length;
@@ -77,9 +70,11 @@ const getRestTokens = (tokens) => {
     return true;
   }).map(token => {
     const { type, text } = token;
+    const reactRegexp = /\${(\w+)}/;
 
     if (reactRegexp.test(text)) {
-      return text.replace(reactRegexp, '<$1 />');
+      // react type token return a string
+      return text.replace(reactRegexp, '$1');
     }
 
     return token;
@@ -96,12 +91,11 @@ const getRestTokens = (tokens) => {
 
 module.exports = function(markdown) {
   const query = loaderUtils.parseQuery(this.query);
-  const configKey = query.config || "markdownLoader";
+  const { Demo } = query;
 
   options = {
     ...options,
     ...query,
-    ...this.options[configKey],
     highlight,
   };
 
@@ -120,8 +114,29 @@ module.exports = function(markdown) {
       return `<div className="remarkdown-container" dangerouslySetInnerHTML={{ __html: \`${marked.parser(token)}\` }}></div>`;
     }
 
-    return token;
+    if (typeof token === 'string') {
+      // react type token, token is the react class
+      if (Demo) {
+        // return custom type
+        return `<Demo demo={${token}} />`;
+      }
+
+      return `<${token} />`;
+    }
+
+    return '';
   });
 
-  return getJSCode(markdowns.join('\n'), preCode);
+  const parsedMarkdown = markdowns.join('\n');
+  let currTemplateStr = templateStr;
+
+  if (Demo) {
+    currTemplateStr = `import Demo from '${Demo}';\n${currTemplateStr}`;
+  }
+
+  const result = currTemplateStr
+    .replace(/\${(preCode)}/g, preCode)
+    .replace(/\${(markdown)}/g, parsedMarkdown);
+  console.log(result);
+  return result;
 };

@@ -4,7 +4,7 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "build": "rm -rf lib && babel src --out-dir lib",
+    "build": "rm -rf lib && babel src --out-dir lib -w",
     "demo": "UV_THREADPOOL_SIZE=100 webpack-dev-server  --progress --port 4004  --colors --content-base demo --hot --inline --config demo/webpack.config.js"
   },
   "keywords": [
@@ -19,12 +19,19 @@
     "babel-cli": "^6.9.0",
     "babel-core": "^6.9.0",
     "babel-loader": "^6.2.4",
+    "babel-plugin-code": "^0.1.2",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.5.0",
+    "css-loader": "^0.23.1",
     "mocha": "^2.4.5",
+    "node-sass": "^3.8.0",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
+    "remarkdown-doc": "^0.1.3",
+    "sass-loader": "^4.0.0",
+    "style-loader": "^0.13.1",
+    "webpack-combine-loaders": "^2.0.0",
     "webpack-dev-server": "^1.14.1"
   },
   "babel": {
