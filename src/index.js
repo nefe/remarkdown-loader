@@ -118,7 +118,7 @@ module.exports = function(markdown) {
       // react type token, token is the react class
       if (Demo) {
         // return custom type
-        return `<Demo demo={${token}} />`;
+        return `<RemarkDownDemo demo={${token}} />`;
       }
 
       return `<${token} />`;
@@ -131,7 +131,7 @@ module.exports = function(markdown) {
   let currTemplateStr = templateStr;
 
   if (Demo) {
-    currTemplateStr = `import Demo from '${Demo}';\n${currTemplateStr}`;
+    currTemplateStr = `import RemarkDownDemo from '${Demo}';\n${currTemplateStr}`;
   }
 
   return currTemplateStr
