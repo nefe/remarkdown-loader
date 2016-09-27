@@ -3,7 +3,7 @@
 With remarkdown-loader, you can render react element in markdown convenient!
 
 [![npm version](https://badge.fury.io/js/remarkdown-loader.png)](https://badge.fury.io/js/remarkdown-loader)
-[![npm downloads](https://img.shields.io/npm/dt/remarkdown-loader.svg?style=flat-square)](https://www.npmjs.com/package/babel-plugin-recharts)
+[![npm downloads](https://img.shields.io/npm/dt/remarkdown-loader.svg?style=flat-square)](https://www.npmjs.com/package/remarkdown-loader)
 
 ## install
 
