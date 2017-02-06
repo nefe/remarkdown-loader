@@ -32,6 +32,8 @@ So you can render react element in markdown like this:
 import Demo from './Demo';
 ```
 
+current language: $={props.language}
+
 ## code:
 
 ```js
