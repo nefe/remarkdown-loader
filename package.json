@@ -4,7 +4,7 @@
   "description": "",
   "main": "lib/index.js",
   "scripts": {
-    "build": "rm -rf lib && babel src --out-dir lib",
+    "build": "rm -rf lib && babel src --out-dir lib -w",
     "demo": "UV_THREADPOOL_SIZE=100 webpack-dev-server  --progress --port 4004  --colors --content-base demo --hot --inline --config demo/webpack.config.js"
   },
   "keywords": [
@@ -48,7 +48,7 @@
   "dependencies": {
     "highlight.js": "^9.4.0",
     "loader-utils": "^0.2.15",
-    "marked": "^0.3.5",
+    "remarkdown": "^0.2.0",
     "webpack": "^1.13.1"
   }
 }

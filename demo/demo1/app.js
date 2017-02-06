@@ -6,6 +6,6 @@ import Test from './test.md';
 ReactDOM.render((
   <div>
     <div className="header">example</div>
-    <Test className="test" />
+    <Test className="test" lang="en" />
   </div>
 ), document.getElementById('app'));
