@@ -31,7 +31,7 @@ const compNGroupRegExp = /\${\w+}/g;
 // 把 markdown 转化为 React ，属于宏。
 function getViewCode(markdown, Demo) {
   // 对 React 组件语法代码单独处理
-  const compCodes = markdown.match(compRegExp)
+  const compCodes = (markdown.match(compRegExp) || [])
     .map(compExp => {
       return compExp.replace(compRegExp, Demo ? '<Demo demo={$1} />' : '<$1 />');
     });
@@ -58,9 +58,10 @@ module.exports = function(markdown) {
   this.cacheable && this.cacheable();
   const code = markdown.replace(expRegExp, '${$1}');
 
-  let precode = code.match(precodeRegExp).map(precode => {
-    return precode.replace(precodeRegExp, '$1');
-  }).join('\n');
+  let precode = (code.match(precodeRegExp) || [])
+    .map(precode => {
+      return precode.replace(precodeRegExp, '$1');
+    }).join('\n');
 
   if (Demo) {
     precode = precode + '\n' + `import Demo from '${Demo}';`;
