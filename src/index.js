@@ -6,7 +6,8 @@ const template = fs.readFileSync(path.join(__dirname, '..', 'Remarkdown.js'));
 const templateStr = template.toString();
 
 const expRegExp = /\$={([\S\s]+?)}/g;
-const precodeRegExp = /\`\`\`js-precode\n([\S\s]+?)\n\`\`\`/g;
+const precodeRegExp = /\`\`\`js-precode[\S\s]+?\`\`\`/g;
+const precodeGroupRegExp = /\`\`\`js-precode([\S\s]+?)\`\`\`/g;
 
 // default option
 let options = {
@@ -81,7 +82,7 @@ module.exports = function(markdown) {
 
   let precode = (code.match(precodeRegExp) || [])
     .map(precode => {
-      return precode.replace(precodeRegExp, '$1');
+      return precode.replace(precodeGroupRegExp, '$1');
     }).join('\n');
 
   if (Demo) {
