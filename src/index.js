@@ -5,8 +5,8 @@ import path from 'path';
 const template = fs.readFileSync(path.join(__dirname, '..', 'Remarkdown.js'));
 const templateStr = template.toString();
 
-const expRegExp = /\$={((.|\n)+?)}/g;
-const precodeRegExp = /\`\`\`js-precode\n((.|\n)+?)\n\`\`\`/g;
+const expRegExp = /\$={([\S\s]+?)}/g;
+const precodeRegExp = /\`\`\`js-precode\n([\S\s]+?)\n\`\`\`/g;
 
 // default option
 let options = {
@@ -28,22 +28,43 @@ function parseRemarkSyntax(markdown) {
 const compRegExp = /\${(\w+)}/g;
 const compNGroupRegExp = /\${\w+}/g;
 
+function combine(rests, inner) {
+  let result = rests[0];
+
+  inner.forEach((innerText, i) => {
+    result = result + innerText + rests[i + 1];
+  });
+
+  return result;
+}
+
 // 把 markdown 转化为 React ，属于宏。
 function getViewCode(markdown, Demo) {
   // 对 React 组件语法代码单独处理
   const compCodes = (markdown.match(compRegExp) || [])
     .map(compExp => {
-      return compExp.replace(compRegExp, Demo ? '<Demo demo={$1} />' : '<$1 />');
+      return compExp.replace(compRegExp, Demo ? '<Demo demo={$1} />' : '<$1 />\n');
     });
 
   // 对 markdown 代码单独处理
   const markedCodes = markdown
     .split(compNGroupRegExp)
     .map(markdownCode => {
-      return `<Markdown md={\`${markdownCode.replace(/\`/g, '\\`')}\`} />`;
+      const codeRex = /\`\`\`[\S\s]+?\`\`\`/g;
+      const codeGroupRex = /\`\`\`([\S\s]+?)\`\`\`/g;
+
+      const codes = (markdownCode.match(codeGroupRex) || [])
+        .map(inCode => inCode.replace(codeGroupRex, '\\`\\`\\`$1\\`\\`\\`'));
+      const rests = markdownCode
+        .split(codeRex)
+        .map(restCode => restCode.replace(/\`([\S\s]+?)\`/g, '\\`$1\\`'));
+
+      const finalCode = combine(rests, codes);
+
+      return `<Markdown md={\`${finalCode}\`} />\n`;
     });
 
-  return markedCodes.join(compCodes);
+  return combine(markedCodes, compCodes);
 }
 
 module.exports = function(markdown) {

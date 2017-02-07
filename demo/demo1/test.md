@@ -1,12 +1,25 @@
 ```js-precode
 import { Demo1, Demo2 } from './Demos';
+
+const title = {
+  en: 'this is a test',
+  cn: '这是测试',
+};
+
+const codeTitle = {
+  en: 'It\'s a code',
+  cn: '这是代码',
+};
+
+const footerTitle = {
+  en: 'It\'s a footer',
+  cn: '这是底边栏',
+};
 ```
 
-# This is a test
+# $={title[props.lang]}
 
-> current language: $={props.lang}
-
-## It's a code
+## $={codeTitle[props.lang]}
 ```js
 
 const data = [{
@@ -16,8 +29,9 @@ const data = [{
 ```
 
 ## demo1
+${Demo1}
 
 ## demo2
 ${Demo2}
 
-## It's footer
+## $={footerTitle[props.lang]}

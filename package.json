@@ -5,7 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "rm -rf lib && babel src --out-dir lib",
-    "demo": "UV_THREADPOOL_SIZE=100 webpack-dev-server  --progress --port 4004  --colors --content-base demo --hot --inline --config demo/webpack.config.js"
+    "dev": "rm -rf lib && babel src --out-dir lib -w",
+    "demo": "UV_THREADPOOL_SIZE=100 webpack-dev-server --port 4004 --content-base demo --hot --inline --config demo/webpack.config.js"
   },
   "keywords": [
     "webpack",
