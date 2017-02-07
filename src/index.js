@@ -26,8 +26,8 @@ function parseRemarkSyntax(markdown) {
     .replace(/\$={}/g, '$1');
 }
 
-const compRegExp = /\${(\w+)}/g;
-const compNGroupRegExp = /\${\w+}/g;
+const compRegExp = /\${(\w+?)}/g;
+const compNGroupRegExp = /\${\w+?}/g;
 
 function combine(rests, inner) {
   let result = rests[0];
@@ -41,28 +41,23 @@ function combine(rests, inner) {
 
 // 把 markdown 转化为 React ，属于宏。
 function getViewCode(markdown, Demo) {
+  // 预处理
+  const codeRex = /\`\`\`[\S\s]+?\`\`\`/g;
+  const pretreatedCode = markdown.replace(codeRex, match => {
+    return match.replace(compRegExp, '$\\{$1}');
+  });
+
   // 对 React 组件语法代码单独处理
-  const compCodes = (markdown.match(compRegExp) || [])
+  const compCodes = (pretreatedCode.match(compRegExp) || [])
     .map(compExp => {
       return compExp.replace(compRegExp, Demo ? '<Demo demo={$1} />' : '<$1 />\n');
     });
 
   // 对 markdown 代码单独处理
-  const markedCodes = markdown
+  const markedCodes = pretreatedCode
     .split(compNGroupRegExp)
     .map(markdownCode => {
-      const codeRex = /\`\`\`[\S\s]+?\`\`\`/g;
-      const codeGroupRex = /\`\`\`([\S\s]+?)\`\`\`/g;
-
-      const codes = (markdownCode.match(codeGroupRex) || [])
-        .map(inCode => inCode.replace(codeGroupRex, '\\`\\`\\`$1\\`\\`\\`'));
-      const rests = markdownCode
-        .split(codeRex)
-        .map(restCode => restCode.replace(/\`([\S\s]+?)\`/g, '\\`$1\\`'));
-
-      const finalCode = combine(rests, codes);
-
-      return `<Markdown md={\`${finalCode}\`} />\n`;
+      return `<Markdown md={\`${markdownCode.replace(/\`/g, '\\`')}\`} />\n`;
     });
 
   return combine(markedCodes, compCodes);
