@@ -1,6 +1,7 @@
 import React from "react";
 import marked from "marked";
 import H from "highlight.js";
+import PropTypes from "prop-types";
 
 const highlight = (code, lang) => {
   if (lang) {
