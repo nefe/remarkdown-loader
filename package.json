@@ -1,6 +1,6 @@
 {
   "name": "remarkdown-loader",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -50,8 +50,6 @@
     "highlight.js": "^9.12.0",
     "loader-utils": "^0.2.15",
     "marked": "^0.3.12",
-    "prop-types": "^15.6.0",
-    "remarkdown": "^0.2.0",
     "webpack": "^1.13.1"
   }
 }
